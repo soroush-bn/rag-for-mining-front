@@ -4,7 +4,7 @@ export function Header() {
   return (
     <header className="relative w-full h-40 md:h-56 overflow-hidden border-b-[6px] border-amber-500 shadow-xl z-20 flex-shrink-0">
       <Image
-        src="/assets/header.webp"
+        src="/assets/header.jpg"
         alt="Mining Safety Operations"
         fill
         className="object-cover object-center scale-[1.02] hover:scale-100 transition-transform duration-[2000ms] ease-out"
@@ -18,11 +18,11 @@ export function Header() {
             System Online
           </span>
         </div>
-        <h1 className="text-white text-2xl md:text-4xl font-extrabold tracking-tight drop-shadow-xl text-center">
-          MINING SAFETY <span className="text-amber-400 font-black">ASSISTANT</span>
+        <h1 className="text-white text-3xl md:text-5xl font-extrabold tracking-tight drop-shadow-xl text-center">
+          Mining Safety <span className="text-amber-400 font-black">RAG System</span>
         </h1>
-        <p className="text-slate-300 text-[11px] md:text-sm font-medium mt-1 tracking-wider uppercase opacity-90 max-w-xl text-center">
-          AI-Powered Intelligence for Operational Safety & Compliance
+        <p className="text-slate-200 text-xs md:text-sm font-medium mt-2 tracking-wider uppercase opacity-90 max-w-xl text-center">
+          Intelligent Document Retrieval & Analysis
         </p>
       </div>
     </header>

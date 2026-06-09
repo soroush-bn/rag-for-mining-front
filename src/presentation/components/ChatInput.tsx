@@ -11,7 +11,6 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
   const [content, setContent] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const pdfInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,89 +29,70 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border-t border-slate-200 p-4 sticky bottom-0 z-10">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-white/95 backdrop-blur-lg border-t border-gray-200/60 p-3 sticky bottom-0 z-10 pb-6">
+      <div className="max-w-3xl mx-auto flex flex-col items-center">
         {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 w-full pl-12 mb-2">
             {attachments.map((file, index) => (
-              <div key={index} className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-sm flex items-center shadow-sm text-slate-700">
-                <svg className="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+              <div key={index} className="bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-xl text-sm flex items-center shadow-sm text-gray-700">
                 <span className="truncate max-w-[150px] font-medium">{file.name}</span>
                 <button 
                   onClick={() => setAttachments(attachments.filter((_, i) => i !== index))}
-                  className="ml-2 text-slate-400 hover:text-red-500 transition-colors focus:outline-none"
+                  className="ml-2 text-gray-400 hover:text-red-500 transition-colors focus:outline-none"
                   aria-label="Remove attachment"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
             ))}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="flex items-end space-x-3 bg-white border border-slate-300 focus-within:border-amber-400 focus-within:ring-4 focus-within:ring-amber-400/20 rounded-2xl shadow-sm px-2 py-2 transition-all duration-200">
-          <div className="flex space-x-1 mb-1 ml-1">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all"
-              title="Upload Image"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => pdfInputRef.current?.click()}
-              className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-              title="Upload Document"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            </button>
-          </div>
+        <form onSubmit={handleSubmit} className="flex items-end w-full space-x-2">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mb-1 p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors flex-shrink-0"
+            title="Add Media or Document"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4"></path>
+            </svg>
+          </button>
           
           <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept="image/*"
-            multiple
-            className="hidden"
-          />
-          <input
-            type="file"
-            ref={pdfInputRef}
-            onChange={handleFileChange}
-            accept=".pdf,.doc,.docx"
+            accept="image/*,.pdf,.doc,.docx"
             multiple
             className="hidden"
           />
 
-          <textarea
-            rows={1}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-            placeholder="Ask a safety question or describe an issue..."
-            className="flex-1 resize-none bg-transparent px-3 py-3 text-slate-800 placeholder-slate-400 focus:outline-none min-h-[48px] max-h-32 text-[15px] leading-relaxed"
-          />
-
-          <button
-            type="submit"
-            disabled={isLoading || (!content.trim() && attachments.length === 0)}
-            className="mb-1 mr-1 p-2.5 bg-amber-500 text-white rounded-xl hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg disabled:hover:shadow-md flex items-center justify-center"
-          >
-            <svg className="w-5 h-5 translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-          </button>
+          <div className="flex-1 bg-white border border-gray-300 rounded-[24px] focus-within:border-[#007AFF] shadow-sm flex items-end px-3 py-1.5 transition-colors">
+            <textarea
+              rows={1}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+              placeholder="iMessage"
+              className="flex-1 resize-none bg-transparent px-2 py-1 text-black placeholder-gray-400 focus:outline-none min-h-[32px] max-h-32 text-[15px] leading-tight"
+            />
+            <button
+              type="submit"
+              disabled={isLoading || (!content.trim() && attachments.length === 0)}
+              className="mb-0.5 ml-2 p-1.5 bg-[#007AFF] text-white rounded-full disabled:bg-gray-200 disabled:text-white transition-colors w-8 h-8 flex items-center justify-center flex-shrink-0"
+            >
+              <svg className="w-4 h-4 translate-y-[-1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+              </svg>
+            </button>
+          </div>
         </form>
-        <div className="text-center mt-3">
-          <p className="text-[11px] text-slate-400 font-medium tracking-wide">
-            Mining Safety Assistant can make mistakes. Verify critical safety protocols.
-          </p>
-        </div>
       </div>
     </div>
   );
