@@ -9,13 +9,12 @@ export default function Home() {
   const { messages, sendMessage, isLoading } = useChat();
 
   return (
-    <main className="flex flex-col h-screen bg-slate-900 font-sans">
+    <main className="flex flex-col h-screen bg-slate-950 font-sans selection:bg-amber-500/30">
       <Header />
-      <div className="flex-1 flex flex-col overflow-hidden relative z-0">
+      <section className="flex-1 flex flex-col min-h-0 relative bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
         <ChatWindow messages={messages} isLoading={isLoading} />
-        <div className="bg-gradient-to-t from-slate-900 to-transparent h-6 absolute bottom-[88px] w-full pointer-events-none z-10" />
         <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
-      </div>
+      </section>
     </main>
   );
 }
