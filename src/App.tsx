@@ -3,7 +3,7 @@ import { Header } from './components/Header/Header';
 import { ChatWindow } from './components/Chat/ChatWindow';
 import { ChatInput } from './components/Chat/ChatInput';
 import type { ChatMessageData, Attachment } from './types/chat';
-import { sendMessageToMockAPI } from './services/api';
+import { sendMessageToAPI } from './services/api';
 import './App.css';
 
 function App() {
@@ -32,12 +32,18 @@ function App() {
     setIsLoading(true);
 
     try {
-      // Simulate sending to backend and getting response
-      const responseMsg = await sendMessageToMockAPI(text, files);
+      // Send to backend and get response
+      const responseMsg = await sendMessageToAPI(text, files);
       setMessages(prev => [...prev, responseMsg]);
     } catch (error) {
-      console.error("Error communicating with mock API:", error);
-      // Handle error visually if needed
+      console.error("Error communicating with API:", error);
+      // Fallback message so the user sees something went wrong
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: "Sorry, I encountered an error communicating with the server.",
+        timestamp: new Date()
+      }]);
     } finally {
       setIsLoading(false);
     }
