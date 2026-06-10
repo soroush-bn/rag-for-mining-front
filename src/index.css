@@ -38,10 +38,12 @@ body::before {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(12px);
+  filter: blur(4px);
+  opacity: 0.6;
   z-index: -1;
 }
 
 #root {
   height: 100%;
+}
 }
