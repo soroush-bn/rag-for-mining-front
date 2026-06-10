@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Header } from './components/Header/Header';
 import { ChatWindow } from './components/Chat/ChatWindow';
 import { ChatInput } from './components/Chat/ChatInput';
+import { AboutModal } from './components/About/AboutModal';
 import type { ChatMessageData, Attachment } from './types/chat';
 import { sendMessageToAPI } from './services/api';
 import './App.css';
@@ -58,6 +59,7 @@ function App() {
           <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
         </div>
       </main>
+      <AboutModal />
     </div>
   );
 }

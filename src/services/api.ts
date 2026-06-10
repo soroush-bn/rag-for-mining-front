@@ -23,8 +23,6 @@ export const sendMessageToAPI = async (
   if (attachments && attachments.length > 0) {
     let successCount = 0;
 
-    // The backend expects one file per request with a "modality" field.
-    // We loop through and upload them individually.
     for (const file of attachments) {
       const formData = new FormData();
 
@@ -38,19 +36,23 @@ export const sendMessageToAPI = async (
         });
 
         if (!ingestRes.ok) {
-          throw new Error(`Ingest API error: ${ingestRes.status}`);
+          let errorMsg = `Ingest error ${ingestRes.status}`;
+          try {
+            const errData = await ingestRes.json();
+            if (errData.detail) errorMsg += `: ${JSON.stringify(errData.detail)}`;
+          } catch(e) {}
+          throw new Error(errorMsg);
         }
 
         successCount++;
       } catch (err) {
         console.error(`Error uploading ${file.name}:`, err);
+        responseContent += `Failed to upload ${file.name}: ${err instanceof Error ? err.message : String(err)}\n\n`;
       }
     }
 
     if (successCount > 0) {
       responseContent += `Successfully uploaded ${successCount} file(s).\n\n`;
-    } else {
-      responseContent += `Failed to upload files.\n\n`;
     }
   }
 
@@ -61,36 +63,55 @@ export const sendMessageToAPI = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           query_text: message,
-          image_url: null, // Optional in your backend, keeping it null if not provided
           top_k: 5,
         }),
       });
 
       if (!askRes.ok) {
+        let errorDetail = '';
+        try {
+          const errorData = await askRes.json();
+          if (errorData.detail) {
+             errorDetail = JSON.stringify(errorData.detail, null, 2);
+          }
+        } catch (e) {
+          // not json
+        }
+        
         throw new Error(
-          `Ask API error: ${askRes.status} ${askRes.statusText}`
+          `Ask API error: ${askRes.status} ${askRes.statusText}${errorDetail ? `\nValidation Details: ${errorDetail}` : ''}`
         );
       }
 
-      const data = await askRes.json();
+      // Try parsing JSON safely. Sometimes servers return 200 OK but an empty body or non-JSON text
+      try {
+        const textData = await askRes.text();
+        if (textData) {
+          try {
+            const data = JSON.parse(textData);
+            responseContent += data.answer || JSON.stringify(data);
+          } catch (jsonErr) {
+             // It wasn't JSON, just use the raw text
+             responseContent += textData;
+          }
+        } else {
+           responseContent += "Server returned an empty successful response.";
+        }
+      } catch (readErr) {
+         console.error('Error reading response body:', readErr);
+         responseContent += "Request succeeded, but the browser could not read the response body.";
+      }
 
-      // Using the QueryResponse model: { answer: str, sources: List[Document] }
-      responseContent += data.answer || 'No answer returned.';
-
-      // Optional: If you want to show the sources used to answer the question
-      // if (data.sources && data.sources.length > 0) {
-      //   responseContent += `\n\n(Sources: ${data.sources.length} documents retrieved)`;
-      // }
     } catch (err) {
       console.error('Ask query error:', err);
-      responseContent += 'Failed to get an answer from the server.';
+      responseContent += `Error: ${err instanceof Error ? err.message : 'Failed to communicate with server.'}`;
     }
   }
 
-  // Fallback if neither condition really produced output
   if (!responseContent.trim()) {
     responseContent = 'Request completed.';
   }
